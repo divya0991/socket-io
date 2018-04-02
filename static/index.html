@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css">
+  .wrapper {
+       margin: auto;
+        width: 60%;
+        border: 3px solid #bcbfc7;
+        padding: 10px;
+    }
+    ul
+    {
+       list-style-type: none;
+    }
+    #chatContainer
+    {
+        margin: auto;
+        width: 60%;
+        display: none;
+
+    }
+  </style>
+     <link href="css/style.css" rel="stylesheet" id="bootstrap-css">
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+	<title></title>
+</head> 
+<body>
+      <div class="wrapper" id="userContainer">
+        <div class="user" >
+          <br>
+            <input type="text" placeholder="Enter user name" id="userName" class="form-control">
+            <br><button onclick="saveuser();" class="btn btn btn-info">Submit</button>
+        </div>
+      </div>
+      <div  id="chatContainer"> 
+          
+<div class="chat_window">
+    <div class="top_menu">
+        <div class="buttons">
+            <div class="button close"></div>
+            <div class="button minimize"></div>
+            <div class="button maximize"></div>
+        </div><div class="title">Chat</div>
+    </div>
+    <ul class="messages" id="users">
+    </ul>
+    <div class="bottom_wrapper clearfix">
+        <div class="message_input_wrapper">
+            <input class="message_input" placeholder="Type your message here..." id="message"/>
+        </div>
+        <div class="send_message">
+            <div class="icon"></div>
+            <button id="btn" class="btn btn-info" onclick="sendMessage();">Send</button>
+        </div>
+    </div>
+</div>
+<!--
+          <div class="" id="messageContainer"><ul id="users"></ul></div>
+          <div class="" >
+              <div class="col-md-10">
+                  <input type="text" placeholder="Enter Message" id="message" class="form-control">
+                </div>
+              <div class="col-md-2">
+
+               <button onclick="sendMessage();" class="btn btn btn-info">Submit</button>
+            </div>
+          </div>
+-->
+       
+     </div>
+        <!-- <ul id="users">
+            
+        </ul> -->
+    
+    
+</body>
+
+<script>
+  var colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#00B3E6', 
+     '#3366E6', '#999966', '#99FF99', '#B34D4D',
+      '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A', 
+      '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+      '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC', 
+      '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+      '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680', 
+      '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+      '#FF3380',  '#66E64D', '#4D80CC', '#9900B3', 
+      '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
+
+      function randomColor()
+      {
+        for (var i = colorArray.length - 1; i >= 0; i--) {
+          var randomIndex = Math.floor(Math.random() * colorArray.length);
+            return colorArray[randomIndex];
+            
+          }
+      }
+
+    var socket = io.connect('');
+    var userName="",color = "";
+    function saveuser()
+    {
+      $("#userContainer").hide();
+      $("#chatContainer").show();
+      userName = document.getElementById('userName').value;
+      color = randomColor();
+      console.log(color);
+      console.log(userName);
+      socket.emit('userName',userName,color);
+    }
+
+  function sendMessage()
+  {
+   var message = document.getElementById('message').value;
+    socket.emit('sendMessage',userName,message,color);
+      document.getElementById('message').value = "";
+  }
+  
+  socket.on("userList",function(userName,color){
+  	console.log(userName); 
+    //var user = document.getElementById("users");
+    var str = '<center><li style="color:'+color+'">'+userName+' Connected</li></center>';
+    $("#users").append(str);
+ 
+  })
+   socket.on("displayMsg",function(userName,message,color){
+      console.log(userName); 
+      var str = '<li style="color:'+color+'">'+userName+' : '+message+'</li>';
+       $("#users").append(str);
+
+   })
+
+</script>
+</html>
